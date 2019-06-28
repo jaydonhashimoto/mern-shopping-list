@@ -14,7 +14,7 @@ import {
 
 //check token and load user
 export const loadUser = () => (dispatch, getState) => {
-    //user loading
+    // //user loading
     dispatch({ type: USER_LOADING });
 
     axios.get('/api/auth/user', tokenConfig(getState))
@@ -29,6 +29,37 @@ export const loadUser = () => (dispatch, getState) => {
             });
         });
 };
+
+//register user
+export const register = ({ name, email, password }) => dispatch => {
+    //headers
+    const config = {
+        header: {
+            'Content-type': 'application/json'
+        }
+    }
+
+    //request body
+    const body = { name, email, password };
+    axios.post('/api/users', body, config)
+        .then((res) => dispatch({
+            type: REGISTER_SUCCESS,
+            payload: res.data
+        }))
+        .catch(err => {
+            dispatch(returnErrors(err.response.data, err.response.status, 'REGISTER_FAIL'));
+            dispatch({
+                type: REGISTER_FAIL
+            })
+        })
+}
+
+//logout user
+export const logout = () => {
+    return {
+        types: LOGIN_SUCCESS
+    }
+}
 
 //setup config/headers and token
 export const tokenConfig = getState => {
